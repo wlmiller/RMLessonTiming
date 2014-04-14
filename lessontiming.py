@@ -13,7 +13,7 @@ Tk().withdraw()
 if len(sys.argv) > 1:
 	filename = sys.argv[1]
 else:
-	filename = askopenfilename()
+	filename = askopenfilename(**{'title':'Select the OS file'})
 
 if not filename[-4:] == 'docx':
 	try:
@@ -75,6 +75,8 @@ for item in sorted(allitems):
 		print '\t{0:30s} {1:4d}'.format(stat,int(itemstats[item][stat]))
 	print '\t' + '='*35
 	print '\t{0:30s} {1:4d}'.format('PREDICTED TIME',int(predLength(itemstats[item])))
+
+print ''
 
 for path in ['weak + behind','weak + ontime']:
 	print path + ':',

@@ -25,7 +25,7 @@ def parseOSfile(osfn):
 					else: itemno = ''
 					if not itemno == '':
 						if 'weak' in colheader.lower():
-							if not 'skip if behind' in colheader.lower():
+							if not ('skip if behind' in colheader.lower() or 'not behind' in colheader.lower()):
 								paths['weak + behind'].append(itemno)
 							paths['weak + ontime'].append(itemno)
 			except IndexError:
