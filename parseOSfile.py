@@ -4,7 +4,7 @@ import re
 def parseOSfile(osfn):
 	osfile = Document(osfn)
 
-	paths = {'weak': [], 'average': [], 'strong': []}
+	paths = {'weak + behind': [], 'weak + ontime': []}
 	for par in osfile.paragraphs:
 		if re.match('[0-9][0-9][0-9]?\. ',par.text):
 			itemno = par.text.split('.')[0].zfill(3)
@@ -25,11 +25,9 @@ def parseOSfile(osfn):
 					else: itemno = ''
 					if not itemno == '':
 						if 'weak' in colheader.lower():
-							paths['weak'].append(itemno)
-						if 'average' in colheader.lower():
-							paths['average'].append(itemno)
-						if 'strong' in colheader.lower():
-							paths['strong'].append(itemno)
+							if not 'skip if behind' in colheader.lower():
+								paths['weak + behind'].append(itemno)
+							paths['weak + ontime'].append(itemno)
 			except IndexError:
 				pass
 			except Exception as e: 

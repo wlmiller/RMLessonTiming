@@ -19,7 +19,8 @@ def getLength(text,wavfn):
    		frames = f.getnframes()
     	rate = f.getframerate()
     	duration = frames / float(rate)
-    
+   
+	os.remove(wavfn)
 	return duration
 
 def getlessonitemstats(itemfn):

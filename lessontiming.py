@@ -23,8 +23,6 @@ if not filename[-4:] == 'docx':
 		exit(3)
 lesson = re.search('[0-9][0-9][0-9]',filename).group()
 filepath = filename.replace(lesson + '.docx','')
-print filepath
-print lesson
 
 paths = parseOSfile(filename)
 
@@ -78,7 +76,9 @@ for item in sorted(allitems):
 	print '\t' + '='*35
 	print '\t{0:30s} {1:4d}'.format('PREDICTED TIME',int(predLength(itemstats[item])))
 
-for path in ['weak','average','strong']:
+for path in ['weak + behind','weak + ontime']:
 	print path + ':',
 	print '{0:.2f}'.format(sum([predLength(itemstats[i]) for i in paths[path]])/60.),
 	print 'min.'
+
+sys.stdin.readline()
