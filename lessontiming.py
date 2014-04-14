@@ -44,8 +44,8 @@ emptylesson = {
 	'submit time': 0, 	# Total submit time
 	'WTD count': 0, 	# "Write this down" count
 	'next count': 0,	# "Next" count
-	'total dialogue time (total)': 0., 		# Total dialogue time estimate
-'dialogue time (main branch)': 0., 	# Main branch dialogue time estimate
+	'dialogue time (total)': 0., 		# Total dialogue time estimate
+	'dialogue time (main branch)': 0., 	# Main branch dialogue time estimate
 	'dialogue time (NR branch)': 0., 	# NoResponse branch dialogue time estimate
 	}
 stats = ['word count', 'submit time', 'WTD count', 'next count','dialogue time (total)', 'dialogue time (main branch)', 'dialogue time (NR branch)']
@@ -80,8 +80,5 @@ for item in sorted(allitems):
 
 for path in ['weak','average','strong']:
 	print path + ':',
-	print sum([predLength(itemstates[i])) for i in paths[path]) 
-
-for item in sorted(allitems):
-	print item + ':',
-	print predLength(itemstats[item])
+	print '{0:.2f}'.format(sum([predLength(itemstats[i]) for i in paths[path]])/60.),
+	print 'min.'

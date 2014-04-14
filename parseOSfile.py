@@ -17,16 +17,19 @@ def parseOSfile(osfn):
 		for col in tab.columns:
 			try:
 				colheader = col.cells[0].paragraphs[0].text
-				if re.match('[0-9][0-9][0-9]?\. ',col.cells[1].paragraphs[0].text):
-					itemno = col.cells[1].paragraphs[0].text.split('.')[0].zfill(3)
-				else:
-					itemno = defaultitemno
-				if 'weak' in colheader.lower():
-					paths['weak'].append(itemno)
-				if 'average' in colheader.lower():
-					paths['average'].append(itemno)
-				if 'strong' in colheader.lower():
-					paths['strong'].append(itemno)
+				for par in col.cells[1].paragraphs:
+					if re.match('[0-9][0-9][0-9]?\. ',par.text):
+						itemno = col.cells[1].paragraphs[0].text.split('.')[0].zfill(3)
+					elif re.match('^same',par.text.lower()):
+						itemno = defaultitemno
+					else: itemno = ''
+					if not itemno == '':
+						if 'weak' in colheader.lower():
+							paths['weak'].append(itemno)
+						if 'average' in colheader.lower():
+							paths['average'].append(itemno)
+						if 'strong' in colheader.lower():
+							paths['strong'].append(itemno)
 			except IndexError:
 				pass
 			except Exception as e: 
