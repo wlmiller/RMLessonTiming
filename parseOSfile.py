@@ -19,7 +19,7 @@ def parseOSfile(osfn):
 				colheader = col.cells[0].paragraphs[0].text
 				for par in col.cells[1].paragraphs:
 					if re.match('[0-9][0-9][0-9]?\. ',par.text):
-						itemno = col.cells[1].paragraphs[0].text.split('.')[0].zfill(3)
+						itemno = par.text.split('.')[0].zfill(3)
 					elif re.match('^same',par.text.lower()):
 						itemno = defaultitemno
 					else: itemno = ''
