@@ -60,6 +60,7 @@ def predLength(itemstat):
 
 	return prediction
 
+print ''
 for item in sorted(allitems):
 	itemstats[item] = emptylesson
 	itemfile = filepath + 'Scripts/' + lesson + '-' + item + '.docx'
@@ -67,6 +68,9 @@ for item in sorted(allitems):
 	if os.path.exists(itemfile.replace('docx','doc')) and not os.path.exists(itemfile):
 		print 'Warning: script for item ' + item + ' is in *.doc format, not *.docx; skipping.'
 	elif not os.path.exists(itemfile):
+		print '"' + lesson + '"'
+		print '"' + item + '"'
+		print itemfile
 		print 'Warning: Scripts/' + lesson + '-' + item + '.docx not found!'
 	else:
 		itemstats[item] = getlessonitemstats(itemfile)
