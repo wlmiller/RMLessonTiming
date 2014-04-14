@@ -78,6 +78,10 @@ for item in sorted(allitems):
 	print '\t' + '='*35
 	print '\t{0:30s} {1:4d}'.format('PREDICTED TIME',int(predLength(itemstats[item])))
 
+for path in ['weak','average','strong']:
+	print path + ':',
+	print sum([predLength(itemstates[i])) for i in paths[path]) 
+
 for item in sorted(allitems):
 	print item + ':',
 	print predLength(itemstats[item])
