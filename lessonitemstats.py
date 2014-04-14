@@ -46,29 +46,29 @@ def getlessonitemstats(itemfn):
 			match = re.search('[0-9]+ words',text).group()
 			wc += int(match.split()[0])
 
-		if style in mainlinestyles or inNR:
-			if 'submit' in text.lower():
-				if re.search('[0-9]+:[0-9][0-9]',text):
-					time = re.search('[0-9]+:[0-9][0-9]',text).group(0)
-					time = time.split(':')
-					submittime += int(time[0])*60+int(time[1])	
-				elif re.search('[0-9]+ second',text.lower()):
-					time = re.search('[0-9]+ second',text.lower()).group(0)
-					submittime += int(time.split(' ')[0])
-				elif re.search('[0-9]+ minute',text.lower()):
-					time = re.search('[0-9]+ minute',text.lower()).group(0)
-					submittime += int(time.split(' ')[0])*60
-				elif 'long' in text.lower():
-					submittime += 40
-				elif 'medium' in text.lower(): 
-					submittime += 20
-				elif 'short' in text.lower():
-					submittime += 10
-			if 'wtd' in text.lower() and not 'disappears' in text.lower():
-				wtdc += 1
-			if '[next' in text.lower():
+		if 'submit' in text.lower():
+			if re.search('[0-9]+:[0-9][0-9]',text):
+				time = re.search('[0-9]+:[0-9][0-9]',text).group(0)
+				time = time.split(':')
+				submittime += int(time[0])*60+int(time[1])	
+			elif re.search('[0-9]+ second',text.lower()):
+				time = re.search('[0-9]+ second',text.lower()).group(0)
+				submittime += int(time.split(' ')[0])
+			elif re.search('[0-9]+ minute',text.lower()):
+				time = re.search('[0-9]+ minute',text.lower()).group(0)
+				submittime += int(time.split(' ')[0])*60
+			elif 'long' in text.lower():
+				submittime += 40
+			elif 'medium' in text.lower(): 
+				submittime += 20
+			elif 'short' in text.lower():
+				submittime += 10
+		if 'wtd' in text.lower() and not 'disappears' in text.lower():
+			wtdc += 1
+		if '[next' in text.lower():
 				nextc += 1
 
+		if style in mainlinestyles or inNR:
 			branchtext = text.replace(u'\u2019',"'")
 			branchtext = branchtext.encode('ascii','ignore')
 			if style in ['Line','BranchLine'] or inNR:

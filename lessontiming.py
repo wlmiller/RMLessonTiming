@@ -50,6 +50,18 @@ emptylesson = {
 	}
 stats = ['word count', 'submit time', 'WTD count', 'next count','dialogue time (total)', 'dialogue time (main branch)', 'dialogue time (NR branch)']
 
+def predLength(itemstat):
+	prediction = 21.565
+	prediction += 0. * itemstat['word count']
+	prediction += 0.269 * itemstat['submit time']
+	prediction += 26.751 * itemstat['WTD count']
+	prediction += 5.238 * itemstat['next count']
+	prediction += 0.759 * itemstat['dialogue time (total)']
+	prediction += 0.602 * itemstat['dialogue time (main branch)']
+	prediction += 0. * itemstat['dialogue time (NR branch)']
+
+	return prediction
+
 for item in sorted(allitems):
 	itemstats[item] = emptylesson
 	itemfile = filepath + 'Scripts/' + lesson + '-' + item + '.docx'
@@ -63,8 +75,9 @@ for item in sorted(allitems):
 	print item + ':'
 	for stat in stats:
 		print '\t{0:30s} {1:4d}'.format(stat,int(itemstats[item][stat]))
+	print '\t' + '='*35
+	print '\t{0:30s} {1:4d}'.format('PREDICTED TIME',int(predLength(itemstats[item])))
 
-
-for item in allitems:
+for item in sorted(allitems):
 	print item + ':',
-	print itemstats[item]
+	print predLength(itemstats[item])
