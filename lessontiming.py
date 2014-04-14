@@ -6,6 +6,7 @@ import comtypes.gen
 import wave, contextlib
 from Tkinter import Tk
 from tkFileDialog import askopenfilename
+from parseOSfile import parseOSfile
 
 
 Tk().withdraw()
@@ -25,35 +26,7 @@ filepath = filename.replace(lesson + '.docx','')
 print filepath
 print lesson
 
-osfile = Document(filename)
-
-paths = {'weak': [], 'average': [], 'strong': []}
-for par in osfile.paragraphs:
-	if re.match('[0-9][0-9][0-9]?\. ',par.text):
-		itemno = par.text.split('.')[0].zfill(3)
-		for path in paths.keys():
-			paths[path].append(itemno)
-
-for tab in osfile.tables:
-	defaultitemno = tab.columns[0].cells[1].paragraphs[0].text.split('.')[0].zfill(3)
-	for col in tab.columns:
-		try:
-			colheader = col.cells[0].paragraphs[0].text
-			if re.match('[0-9][0-9][0-9]?\. ',col.cells[1].paragraphs[0].text):
-				itemno = col.cells[1].paragraphs[0].text.split('.')[0].zfill(3)
-			else:
-				itemno = defaultitemno
-			if 'weak' in colheader.lower():
-				paths['weak'].append(itemno)
-			if 'average' in colheader.lower():
-				paths['average'].append(itemno)
-			if 'strong' in colheader.lower():
-				paths['strong'].append(itemno)
-		except IndexError:
-			pass
-		except: 
-			print e
-			pass
+paths = parseOSfile(filename)
 
 for path in paths:
 	print path + ':',
@@ -65,9 +38,19 @@ for path in paths:
 
 allitems = set([i.encode('ascii') for i in allitems])
 
-itemtimes = {}
+itemstats = {}
+emptylesson = {
+	'WC': 0, 			# Word count
+	'submittime': 0, 	# Total submit time
+	'WTDs': 0, 			# "Write this down" count
+	'nexts': 0, 		# "Next" count
+	'TTStime': 0., 		# Total dialogue time estimate
+	'TTSmaintime': 0., 	# Main branch dialogue time estimate
+	'TTSNRtime': 0., 	# NoResponse branch dialogue time estimate
+	'timeestimate': 0.}	# Total predicted time
+
 for item in sorted(allitems):
-	itemtimes[item] = 0.
+	itemstats[item] = emptylesson
 	itemfile = filepath + 'Scripts/' + lesson + '-' + item + '.docx'
 	
 	if os.path.exists(itemfile.replace('docx','doc')) and not os.path.exists(itemfile):
@@ -75,8 +58,8 @@ for item in sorted(allitems):
 	elif not os.path.exists(itemfile):
 		print 'Warning: Scripts/' + lesson + '-' + item + '.docx not found!'
 	else:
-		itemtimes[item] = 1.
+		itemstats[item] = getlessonstats(itemfile)
 
 for item in allitems:
 	print item + ':',
-	print itemtimes[item]
+	print itemstats[item]
