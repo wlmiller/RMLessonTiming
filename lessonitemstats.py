@@ -23,9 +23,9 @@ def getLength(text,wavfn):
 	#os.remove(wavfn)
 	return duration
 
-def getStats(par):
-	text = par.text
-	style = par.style
+def getStats(text,style):
+	#text = par.text
+	#style = par.style
 	wc = 0
 	submittime = 0
 	wtdc = 0
@@ -68,9 +68,9 @@ def getStats(par):
 		nextc += 1
 	return [wc,submittime,wtdc,nextc,shortcount,medcount,longcount,nonstandardsubmittime]
 
-def getBranchText(par,inNR):
-	text = par.text
-	style = par.style
+def getBranchText(text,style,inNR):
+	#text = par.text
+	#style = par.style
 
 	MLtext = ''
 	NRtext = ''
@@ -101,8 +101,8 @@ def getBranchText(par,inNR):
 
 	return MLtext,NRtext
 
-def getDocText(par):
-	text = par.text
+def getDocText(text,style):
+	#text = par.text
 	doctext = ''
 
 	text = text.replace(u'\u2019',"'")
@@ -126,13 +126,13 @@ def getDocText(par):
 		doctext += ' ' + text
 	return doctext
 
-def getOnscreenText(par):
-	text = par.text
+def getOnscreenText(text,style):
+	#text = par.text
 	doctext = ''
 
 	text = text.replace(u'\u2019',"'")
 	text = text.encode('ascii','ignore')
-	if par.style == 'Onscreen':
+	if style == 'Onscreen':
 		text = re.sub('[A-Z][0-9,]+','',text).split('//')[0]
 
 		bc = 0
@@ -179,9 +179,12 @@ def getlessonitemstats(itemfn):
 
 	for par in doc.paragraphs:
 		style = par.style
-		text = par.text
+		text = ''
+		
 		for run in par.runs:
-			if run.strike: print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+			if not run.strike:
+				text += run.text
+		
 		if style == 'NoResponse' or style == 'SecondaryNoResponse': inNR = True
 		elif style in mainlinestyles: inNR = False
 
@@ -226,7 +229,7 @@ def getlessonitemstats(itemfn):
 			branchcount = 0
 
 
-		temp = getStats(par)
+		temp = getStats(text,style)
 		wc += temp[0]
 		submittime += temp[1]
 		wtdc += temp[2]
@@ -236,10 +239,10 @@ def getlessonitemstats(itemfn):
 		longcount += temp[6]
 		nonstandardsubmittime += temp[7]
 		
-		doctext += getDocText(par)
-		onscreentext += getOnscreenText(par)
+		doctext += getDocText(text,style)
+		onscreentext += getOnscreenText(text,style)
 		
-		temp = getBranchText(par,inNR)
+		temp = getBranchText(text,style,inNR)
 		MLtext += temp[0]
 		NRtext += temp[1]
 
