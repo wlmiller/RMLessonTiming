@@ -180,6 +180,8 @@ def getlessonitemstats(itemfn):
 	for par in doc.paragraphs:
 		style = par.style
 		text = par.text
+		for run in par.runs:
+			if run.strike: print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 		if style == 'NoResponse' or style == 'SecondaryNoResponse': inNR = True
 		elif style in mainlinestyles: inNR = False
 
