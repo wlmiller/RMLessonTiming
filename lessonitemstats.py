@@ -34,6 +34,7 @@ def getStats(text,style):
 	medcount = 0
 	longcount = 0
 	nonstandardsubmittime = 0
+	longsubmittime = 0
 	
 	if re.search('[0-9]+ words',text):
 		match = re.search('[0-9]+ words',text).group()
@@ -43,16 +44,24 @@ def getStats(text,style):
 		if re.search('[0-9]+:[0-9][0-9]',text):
 			time = re.search('[0-9]+:[0-9][0-9]',text).group(0)
 			time = time.split(':')
-			submittime += int(time[0])*60+int(time[1])
-			nonstandardsubmittime += int(time[0])*60+int(time[1])
+			stime = int(time[0])*60+int(time[1])
+			submittime += stime
+			nonstandardsubmittime += stime
+			if stime >= 180: longsubmittime += stime
 		elif re.search('[0-9]+ second',text.lower()):
 			time = re.search('[0-9]+ second',text.lower()).group(0)
-			submittime += int(time.split(' ')[0])
-			nonstandardsubmittime += int(time.split(' ')[0])
+			stime = int(time.split(' ')[0])
+			submittime += stime
+			nonstandardsubmittime += stime
+			if stime >= 180:
+				longsubmittime += stime
 		elif re.search('[0-9]+ minute',text.lower()):
 			time = re.search('[0-9]+ minute',text.lower()).group(0)
-			submittime += int(time.split(' ')[0])*60
-			nonstandardsubmittime += int(time.split(' ')[0])*60
+			stime = int(time.split(' ')[0])*60
+			submittime += stime
+			nonstandardsubmittime += stime
+			if stime >= 180:
+				longsubmittime += stime
 		elif 'long' in text.lower():
 			submittime += 40
 			longcount += 1
@@ -66,7 +75,7 @@ def getStats(text,style):
 		wtdc += 1
 	if '[next' in text.lower():
 		nextc += 1
-	return [wc,submittime,wtdc,nextc,shortcount,medcount,longcount,nonstandardsubmittime]
+	return [wc,submittime,wtdc,nextc,shortcount,medcount,longcount,nonstandardsubmittime,longsubmittime]
 
 def getBranchText(text,style,inNR):
 	#text = par.text
@@ -175,7 +184,8 @@ def getlessonitemstats(itemfn):
 	shortcount = 0
 	medcount = 0
 	longcount = 0
-	nonstandardsubmittime = 0
+	nonstandardsubmittime = 0.
+	longcustomtime = 0.
 
 	for par in doc.paragraphs:
 		style = par.style
@@ -238,6 +248,7 @@ def getlessonitemstats(itemfn):
 		medcount += temp[5]
 		longcount += temp[6]
 		nonstandardsubmittime += temp[7]
+		longcustomtime += temp[8]
 		
 		doctext += getDocText(text,style)
 		onscreentext += getOnscreenText(text,style)
@@ -266,5 +277,6 @@ def getlessonitemstats(itemfn):
 			'short count': shortcount,
 			'medium count': medcount,
 			'long count': longcount,
-			'nonstandard submit time': nonstandardsubmittime
+			'nonstandard submit time': nonstandardsubmittime,
+			'long submit time': longcustomtime
 			}
