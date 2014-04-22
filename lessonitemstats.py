@@ -5,7 +5,7 @@ from comtypes.client import CreateObject
 import comtypes.gen
 import wave, contextlib
 
-mainlinestyles = ['Line','Normal','DefaultStyle']
+mainlinestyles = ['Line','Normal','DefaultStyle','Onscreen']
 
 def getLength(text,wavfn):
 	engine = CreateObject("SAPI.SpVoice")
@@ -196,9 +196,7 @@ def getlessonitemstats(itemfn):
 		for run in par.runs:
 			if not run.strike:
 				text += run.text
-		print style,
-		print text.encode('ascii','ignore')
-		
+
 		if style == 'NoResponse' or style == 'SecondaryNoResponse': inNR = True
 		elif style in mainlinestyles: inNR = False
 
@@ -209,7 +207,7 @@ def getlessonitemstats(itemfn):
 		if re.match('^correct',text.lower()) or re.match('^incorrect',text.lower()) or re.match('^no response',text.lower()):
 			branchcount += 1
 			if re.match('^correct',text.lower()):
-				corrcount += 1
+				avgcorrcount += 1
 		if inBranch or inNR or not style in mainlinestyles:
 			if re.match('[A-Z][0-9]+',text):
 				btext = text.replace(u'\u2019',"'")
@@ -241,7 +239,6 @@ def getlessonitemstats(itemfn):
 				branchnum += 1
 				totalbranchlength = getLength(branchtext,itemfn.replace('.docx',"-branch" + str(branchnum) + ".wav"))
 				avgbranchlength += totalbranchlength/branchcount
-				avgcorrcount += corrcount
 			branchtext = ''
 			branchcount = 0
 
