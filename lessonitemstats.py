@@ -141,7 +141,7 @@ def getOnscreenText(text,style):
 
 	text = text.replace(u'\u2019',"'")
 	text = text.encode('ascii','ignore')
-	if style == 'Onscreen':
+	if not re.match('[A-Z][0-9]+',text):
 		text = re.sub('[A-Z][0-9,]+','',text).split('//')[0]
 
 		bc = 0
@@ -178,6 +178,7 @@ def getlessonitemstats(itemfn):
 	avgbranchlength = 0
 	totalbranchlength = 0
 	branchcount = 0
+	corrcount = 0
 	gotoNR = True
 	inBranch = False
 	branchnum = 0
@@ -186,6 +187,7 @@ def getlessonitemstats(itemfn):
 	longcount = 0
 	nonstandardsubmittime = 0.
 	longcustomtime = 0.
+	avgcorrcount = 0.
 
 	for par in doc.paragraphs:
 		style = par.style
@@ -194,6 +196,8 @@ def getlessonitemstats(itemfn):
 		for run in par.runs:
 			if not run.strike:
 				text += run.text
+		print style,
+		print text.encode('ascii','ignore')
 		
 		if style == 'NoResponse' or style == 'SecondaryNoResponse': inNR = True
 		elif style in mainlinestyles: inNR = False
@@ -203,7 +207,9 @@ def getlessonitemstats(itemfn):
 		elif inNR: inBranch = False
 		
 		if re.match('^correct',text.lower()) or re.match('^incorrect',text.lower()) or re.match('^no response',text.lower()):
-			branchcount += 1 
+			branchcount += 1
+			if re.match('^correct',text.lower()):
+				corrcount += 1
 		if inBranch or inNR or not style in mainlinestyles:
 			if re.match('[A-Z][0-9]+',text):
 				btext = text.replace(u'\u2019',"'")
@@ -235,6 +241,7 @@ def getlessonitemstats(itemfn):
 				branchnum += 1
 				totalbranchlength = getLength(branchtext,itemfn.replace('.docx',"-branch" + str(branchnum) + ".wav"))
 				avgbranchlength += totalbranchlength/branchcount
+				avgcorrcount += corrcount
 			branchtext = ''
 			branchcount = 0
 
@@ -257,6 +264,7 @@ def getlessonitemstats(itemfn):
 		MLtext += temp[0]
 		NRtext += temp[1]
 
+	if branchnum > 0: avgcorrcount /= branchnum
 	TTStime = getLength(doctext,wavfn)
 	MLtime = getLength(MLtext,wavfn.replace('.wav','-main.wav'))
 	NRtime = getLength(NRtext,wavfn.replace('.wav','-NR.wav'))
@@ -278,5 +286,7 @@ def getlessonitemstats(itemfn):
 			'medium count': medcount,
 			'long count': longcount,
 			'nonstandard submit time': nonstandardsubmittime,
-			'long submit time': longcustomtime
+			'long submit time': longcustomtime,
+			'corrects per branch': avgcorrcount,
+			'branch count': branchnum,
 			}
