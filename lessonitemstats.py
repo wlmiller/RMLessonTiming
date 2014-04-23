@@ -7,7 +7,22 @@ import wave, contextlib
 
 mainlinestyles = ['Line','Normal','DefaultStyle','Onscreen']
 
+def removeBracketed(text):
+	'''Remove text enclosed in square brackets.  Regexes can't really handle
+	nested brackets, so this does it manually.'''
+	bc = 0
+	temp = ''
+	for char in text:
+		if char == '[':
+			bc += 1
+		if bc == 0: temp += char
+		if char == ']':
+			bc -= 1
+	return temp
+
 def getLength(text,wavfn):
+	'''Get the length, in seconds, of a wav file produced by applying a
+	text-to-speech engine to the given text.'''
 	engine = CreateObject("SAPI.SpVoice")
 	stream = CreateObject("SAPI.SpFileStream")
 	stream.Open(wavfn, comtypes.gen.SpeechLib.SSFMCreateForWrite)
@@ -24,6 +39,7 @@ def getLength(text,wavfn):
 	return duration
 
 def getStats(text,style):
+	'''Get various statistics of the text.'''
 	submittime = 0
 	wtdc = 0
 	nextc = 0
@@ -71,6 +87,7 @@ def getStats(text,style):
 	return [submittime,wtdc,nextc,shortcount,medcount,longcount,nonstandardsubmittime,longsubmittime]
 
 def getBranchText(text,style,inNR):
+	'''Get text in the "main" and "NoResponse" branches.'''
 	MLtext = ''
 	NRtext = ''
 
@@ -79,16 +96,8 @@ def getBranchText(text,style,inNR):
 		text = text.encode('ascii','ignore')
 		if style in ['Line','BranchLine'] or inNR:
 			text = re.sub('^[A-Z]* ','',text)
-
-			bc = 0
-			temp = ''
-			for char in text:	# Regexes don't handle nested brackets well.
-				if char == '[':
-					bc += 1
-				if bc == 0: temp += char
-				if char == ']':
-					bc -= 1
-			text = temp
+	
+			text = removeBracketed(text)
 
 			text = text.replace('  ',' ')
 			text = text.replace('#','')
@@ -101,22 +110,18 @@ def getBranchText(text,style,inNR):
 	return MLtext,NRtext
 
 def getDocText(text,style):
+	'''Get any dialogue text.'''
 	doctext = ''
 
 	text = text.replace(u'\u2019',"'")
 	text = text.encode('ascii','ignore')
 	if re.match('^[A-Z] ',text) and not '(tutor)' in text and not 'student)' in text:
+		# Dialogue texts starts with a single letter (e.g. 'T' or 'A').
+		# Exclude lines containing '(tutor)' and 'student)' as a precaution
+		# against counting the character definition lines near the top.
 		text = re.sub('^[A-Z] ','',text).split('/ /')[0]
 
-		bc = 0
-		temp = ''
-		for char in text:	# Regexes don't handle nested brackets well.
-			if char == '[':
-					bc += 1
-			if bc == 0: temp += char
-			if char == ']':
-				bc -= 1
-		text = temp
+		text = removeBracketed(text)
 
 		text = text.replace('  ',' ')
 		text = text.replace('#','')
@@ -125,7 +130,7 @@ def getDocText(text,style):
 	return doctext
 
 def getOnscreenText(text,style):
-	#text = par.text
+	'''Get any unbracketed next that's not dialogue.'''
 	doctext = ''
 
 	text = text.replace(u'\u2019',"'")
@@ -133,15 +138,7 @@ def getOnscreenText(text,style):
 	if not re.match('^[A-Z] ',text):
 		text = re.sub('^[A-Z] ','',text).split('/ /')[0]
 
-		bc = 0
-		temp = ''
-		for char in text:	# Regexes don't handle nested brackets well.
-			if char == '[':
-					bc += 1
-			if bc == 0: temp += char
-			if char == ']':
-				bc -= 1
-		text = temp
+		text = removeBracketed(text)
 
 		text = text.replace('  ',' ')
 		text = text.replace('#','')
@@ -150,6 +147,7 @@ def getOnscreenText(text,style):
 	return doctext
 
 def getlessonitemstats(itemfn):
+	'''Calculate statsitics of the lesson item.'''
 	doc = Document(itemfn)
 	wavfn = itemfn.replace('docx','wav')
 
@@ -185,9 +183,11 @@ def getlessonitemstats(itemfn):
 				text += ' ' + run.text
 		text = re.sub('^ ','',text)
 
+		# Track if we're in a No Response branch
 		if style == 'NoResponse' or style == 'SecondaryNoResponse': inNR = True
 		elif style in mainlinestyles: inNR = False
 
+		# Track if we're in a branch besides No Response.
 		if style in ['Correct','Incorrect']:
 			inBranch = True
 		elif inNR: inBranch = False
@@ -196,21 +196,15 @@ def getlessonitemstats(itemfn):
 			branchcount += 1
 			if re.match('^correct',text.lower()):
 				avgcorrcount += 1
+
+		# Any dialogue that either we know is part of a branch or is explicitly NOT.
 		if inBranch or inNR or not style in mainlinestyles:
-			if re.match('^[A-Z][0-9]* ',text):
+			if re.match('^[A-Z] ',text):
 				btext = text.replace(u'\u2019',"'")
 				btext = btext.encode('ascii','ignore')
-				btext = re.sub('^[A-Z][0-9,]* ','',btext)
+				btext = re.sub('^[A-Z] ','',btext)
 
-				bc = 0
-				temp = ''
-				for char in btext:	# Regexes don't handle nested brackets well.
-					if char == '[':
-							bc += 1
-					if bc == 0: temp += char
-					if char == ']':
-						bc -= 1
-				btext = temp
+				text = removeBracketed(text)
 
 				btext = btext.replace('  ',' ')
 				btext = btext.replace('#','')

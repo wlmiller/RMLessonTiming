@@ -2,10 +2,13 @@ from docx import *
 import re
 
 def parseOSfile(osfn):
+	'''Parse the given OS file, extracting the paths of interest.'''
 	osfile = Document(osfn)
 
 	paths = {'weak + behind': [], 'weak + ontime': []}
-	for par in osfile.paragraphs:
+
+	for par in osfile.paragraphs:	
+	# First, go through the paragraphs and pull out any numbers starting lines.
 		if re.match(' ?[0-9][0-9][0-9]?\.',par.text):
 			itemno = par.text.split('.')[0].replace(' ','').zfill(3)
 			for path in paths.keys():
@@ -13,8 +16,10 @@ def parseOSfile(osfn):
 
 	osfile = Document(osfn)
 	for tab in osfile.tables:
+	# Next, go through the tables.
 		if len(tab.columns[0].cells) > 1:
 			defaultitemno = tab.columns[0].cells[1].paragraphs[0].text.split('.')[0].replace(' ','').zfill(3)
+			# defaultitemno is the fallback if the OS describes the branch as 'same as...'.
 			for col in tab.columns:
 				try:
 					colheader = col.cells[0].paragraphs[0].text
