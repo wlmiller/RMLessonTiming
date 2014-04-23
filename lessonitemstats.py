@@ -91,11 +91,11 @@ def getBranchText(text,style,inNR):
 	MLtext = ''
 	NRtext = ''
 
-	if (style in mainlinestyles or inNR) and re.match('^[A-Z]* ',text) and not '(tutor)' in text and not 'student)' in text:
+	if (style in mainlinestyles or inNR) and re.match('^[A-Z][0-9]* ',text) and not '(tutor)' in text and not 'student)' in text:
 		text = text.replace(u'\u2019',"'")
 		text = text.encode('ascii','ignore')
 		if style in ['Line','BranchLine'] or inNR:
-			text = re.sub('^[A-Z]* ','',text)
+			text = re.sub('^[A-Z][0-9]* ','',text)
 	
 			text = removeBracketed(text)
 
@@ -115,11 +115,11 @@ def getDocText(text,style):
 
 	text = text.replace(u'\u2019',"'")
 	text = text.encode('ascii','ignore')
-	if re.match('^[A-Z] ',text) and not '(tutor)' in text and not 'student)' in text:
+	if re.match('^[A-Z][0-9]* ',text) and not '(tutor)' in text and not 'student)' in text:
 		# Dialogue texts starts with a single letter (e.g. 'T' or 'A').
 		# Exclude lines containing '(tutor)' and 'student)' as a precaution
 		# against counting the character definition lines near the top.
-		text = re.sub('^[A-Z] ','',text).split('/ /')[0]
+		text = re.sub('^[A-Z][0-9]* ','',text).split('/ /')[0]
 
 		text = removeBracketed(text)
 
@@ -135,8 +135,8 @@ def getOnscreenText(text,style):
 
 	text = text.replace(u'\u2019',"'")
 	text = text.encode('ascii','ignore')
-	if not re.match('^[A-Z] ',text):
-		text = re.sub('^[A-Z] ','',text).split('/ /')[0]
+	if not re.match('^[A-Z][0-9]* ',text):
+		text = re.sub('^[A-Z][0-9]* ','',text).split('/ /')[0]
 
 		text = removeBracketed(text)
 
@@ -199,10 +199,10 @@ def getlessonitemstats(itemfn):
 
 		# Any dialogue that either we know is part of a branch or is explicitly NOT.
 		if inBranch or inNR or not style in mainlinestyles:
-			if re.match('^[A-Z] ',text):
+			if re.match('^[A-Z][0-9]* ',text):
 				btext = text.replace(u'\u2019',"'")
 				btext = btext.encode('ascii','ignore')
-				btext = re.sub('^[A-Z] ','',btext)
+				btext = re.sub('^[A-Z][0-9]* ','',btext)
 
 				text = removeBracketed(text)
 
