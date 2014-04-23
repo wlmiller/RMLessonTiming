@@ -184,8 +184,8 @@ def getlessonitemstats(itemfn):
 	nonstandardsubmittime = 0.
 	longcustomtime = 0.
 	avgcorrcount = 0.
-
-	for par in doc.paragraphs:
+	
+	for par in doc.paragraphs[7:]:
 		style = par.style
 		text = ''
 		
