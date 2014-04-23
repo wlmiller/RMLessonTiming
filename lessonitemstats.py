@@ -24,9 +24,6 @@ def getLength(text,wavfn):
 	return duration
 
 def getStats(text,style):
-	#text = par.text
-	#style = par.style
-	wc = 0
 	submittime = 0
 	wtdc = 0
 	nextc = 0
@@ -71,12 +68,9 @@ def getStats(text,style):
 		wtdc += 1
 	if '[next' in text.lower():
 		nextc += 1
-	return [wc,submittime,wtdc,nextc,shortcount,medcount,longcount,nonstandardsubmittime,longsubmittime]
+	return [submittime,wtdc,nextc,shortcount,medcount,longcount,nonstandardsubmittime,longsubmittime]
 
 def getBranchText(text,style,inNR):
-	#text = par.text
-	#style = par.style
-
 	MLtext = ''
 	NRtext = ''
 
@@ -107,7 +101,6 @@ def getBranchText(text,style,inNR):
 	return MLtext,NRtext
 
 def getDocText(text,style):
-	#text = par.text
 	doctext = ''
 
 	text = text.replace(u'\u2019',"'")
@@ -160,8 +153,6 @@ def getlessonitemstats(itemfn):
 	doc = Document(itemfn)
 	wavfn = itemfn.replace('docx','wav')
 
-	wc = 0
-	lc = 0
 	submittime = 0
 	wtdc = 0
 	nextc = 0
@@ -241,15 +232,14 @@ def getlessonitemstats(itemfn):
 
 
 		temp = getStats(text,style)
-		wc += temp[0]
-		submittime += temp[1]
-		wtdc += temp[2]
-		nextc += temp[3]
-		shortcount += temp[4]
-		medcount += temp[5]
-		longcount += temp[6]
-		nonstandardsubmittime += temp[7]
-		longcustomtime += temp[8]
+		submittime += temp[0]
+		wtdc += temp[1]
+		nextc += temp[2]
+		shortcount += temp[3]
+		medcount += temp[4]
+		longcount += temp[5]
+		nonstandardsubmittime += temp[6]
+		longcustomtime += temp[7]
 		
 		doctext += getDocText(text,style)
 		onscreentext += getOnscreenText(text,style)
@@ -264,7 +254,6 @@ def getlessonitemstats(itemfn):
 	NRtime = getLength(NRtext,wavfn.replace('.wav','-NR.wav'))
 	
 	return {
-			'word count': wc,
 			'submit time': submittime, 
 			'WTD count': wtdc,
 			'next count': nextc,

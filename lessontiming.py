@@ -59,7 +59,17 @@ lessoncoefficients = {
 	'y-intercept': 640.44
 }
 
-def predLessonLength(itemstats):
+def timeFormat(time):
+	minutes = int(time/60)
+	seconds = int(round(time-minutes*60))
+	return str(minutes) + ':' + str(seconds).zfill(2)
+
+def predLength(stats,coefs):
+	prediction = coefs['y-intercept']
+	prediction += sum([stats[f]*coefs[f] for f in coefs if f != 'y-intercept'])
+	return timeFormat(prediction)
+
+def lessonStats(itemstats):
 	lessonstats = {}
 	for i in itemstats:
 		i['total corrects'] = i['corrects per branch']*i['branch count']
@@ -71,24 +81,7 @@ def predLessonLength(itemstats):
 	
 	lessonstats['corrects per branch'] = lessonstats['total corrects']/lessonstats['branch count']
 
-	prediction = lessoncoefficients['y-intercept']
-	for feat in lessoncoefficients:
-		if feat != 'y-intercept':
-			prediction += lessoncoefficients[feat]*lessonstats[feat]
-
-	minutes = int(prediction/60)
-	seconds = int(round(prediction-minutes*60))
-	return str(minutes) + ':' + str(seconds).zfill(2)
-
-def predItemLength(itemstat):
-	prediction = itemcoefficients['y-intercept'] 
-	for feat in itemcoefficients:
-		if feat != 'y-intercept':
-			prediction += itemcoefficients[feat]*itemstat[feat]
-
-	minutes = int(prediction/60)
-	seconds = int(round(prediction-minutes*60))
-	return str(minutes) + ':' + str(seconds).zfill(2)
+	return lessonstats
 
 for i in sorted(allitems):
 	item = '-'.join(i.split('-')[1:])
@@ -101,12 +94,12 @@ for i in sorted(allitems):
 		print 'Warning: Scripts/' + lesson + '-' + item + '.docx not found!'
 	else:
 		itemstats[item] = getlessonitemstats(itemfile)
-		print i.ljust(15) + predItemLength(itemstats[item]).rjust(10)
+		print i.ljust(15) + predLength(itemstats[item],itemcoefficients).rjust(10)
 
 print '='*25
 
 for path in ['weak + behind','weak + ontime']:
 	pathstats = [itemstats[i] for i in paths[path]]
-	print path.ljust(15) + predLessonLength(pathstats).rjust(10)
+	print path.ljust(15) + predLength(lessonStats(pathstats),lessoncoefficients).rjust(10)
 
 sys.stdin.readline()
