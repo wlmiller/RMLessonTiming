@@ -27,7 +27,7 @@ filepath = filename.replace(lesson + '.docx','')
 paths = parseOSfile(filename)
 
 allitems = []
-for fn in [f for f in os.listdir(filepath + 'Scripts/') if 'docx' in f]:
+for fn in [f for f in os.listdir(filepath + 'Scripts/') if 'doc' in f]:
 	allitems += [fn.split('.doc')[0].encode('ascii')]
 
 itemstats = {}
@@ -41,31 +41,42 @@ emptylesson = {
 	'dialogue time (NR branch)': 0., 	# NoResponse branch dialogue time estimate
 	}
 
+itemcoefficients = {
+	'submit time': 0.302,
+	'WTD count': 29.055,
+	'next count': 5.602,
+	'dialogue time (total)': 0.887,
+	'dialogue time (main branch)': 0.443,
+	'dialogue time (NR branch)': -0.344,
+	'onscreen text word count': 0.114,
+	'long submit time': -0.049,
+	'corrects per branch': -3.133,
+	'y-intercept': 20.293
+}
+
+
 def predLessonLength(itemstats):
 	return '45:00'
 
 def predItemLength(itemstat):
-	prediction = 21.565
-	prediction += 0. * itemstat['word count']
-	prediction += 0.269 * itemstat['submit time']
-	prediction += 26.751 * itemstat['WTD count']
-	prediction += 5.238 * itemstat['next count']
-	prediction += 0.759 * itemstat['dialogue time (total)']
-	prediction += 0.602 * itemstat['dialogue time (main branch)']
-	prediction += 0. * itemstat['dialogue time (NR branch)']
+	prediction = itemcoefficients['y-intercept'] 
+	for feat in itemcoefficients:
+		if feat != 'y-intercept':
+			prediction += itemcoefficients[feat]*itemstat[feat]
 
 	minutes = int(prediction/60)
 	seconds = int(round(prediction-minutes*60))
-	return str(minutes) + ':' + str(seconds)
+	return str(minutes) + ':' + str(seconds).zfill(2)
 
 print ''
 for i in sorted(allitems):
 	item = '-'.join(i.split('-')[1:])
-	itemstats[item] = emptylesson
+	#itemstats[item] = emptylesson
 	itemfile = filepath + 'Scripts/' + i + '.docx'
 	
 	if os.path.exists(itemfile.replace('docx','doc')) and not os.path.exists(itemfile):
 		print 'Warning: script for item ' + item + ' is in *.doc format, not *.docx; skipping.'
+		itemstats[i] = {}
 	elif not os.path.exists(itemfile):
 		print '"' + lesson + '"'
 		print '"' + item + '"'
@@ -76,6 +87,8 @@ for i in sorted(allitems):
 		print i.ljust(15) + predItemLength(itemstats[item]).rjust(10)
 
 print '='*25
+
+print itemstats.keys()
 
 for path in ['weak + behind','weak + ontime']:
 	pathstats = [itemstats[i] for i in paths[path]]
