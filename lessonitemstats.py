@@ -113,7 +113,7 @@ def getDocText(text,style):
 	text = text.replace(u'\u2019',"'")
 	text = text.encode('ascii','ignore')
 	if re.match('^[A-Z] ',text) and not '(tutor)' in text and not 'student)' in text:
-		text = re.sub('^[A-Z] ','',text).split('//')[0]
+		text = re.sub('^[A-Z] ','',text).split('/ /')[0]
 
 		bc = 0
 		temp = ''
@@ -138,7 +138,7 @@ def getOnscreenText(text,style):
 	text = text.replace(u'\u2019',"'")
 	text = text.encode('ascii','ignore')
 	if not re.match('^[A-Z] ',text):
-		text = re.sub('^[A-Z] ','',text).split('//')[0]
+		text = re.sub('^[A-Z] ','',text).split('/ /')[0]
 
 		bc = 0
 		temp = ''
