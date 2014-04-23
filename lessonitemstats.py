@@ -36,10 +36,6 @@ def getStats(text,style):
 	nonstandardsubmittime = 0
 	longsubmittime = 0
 	
-	if re.search('[0-9]+ words',text):
-		match = re.search('[0-9]+ words',text).group()
-		wc += int(match.split()[0])
-
 	if 'submit' in text.lower():
 		if re.search('[0-9]+:[0-9][0-9]',text):
 			time = re.search('[0-9]+:[0-9][0-9]',text).group(0)
@@ -84,11 +80,11 @@ def getBranchText(text,style,inNR):
 	MLtext = ''
 	NRtext = ''
 
-	if (style in mainlinestyles or inNR) and re.match('[A-Z][0-9]+',text):
+	if (style in mainlinestyles or inNR) and re.match('^[A-Z]* ',text) and not '(tutor)' in text and not 'student)' in text:
 		text = text.replace(u'\u2019',"'")
 		text = text.encode('ascii','ignore')
 		if style in ['Line','BranchLine'] or inNR:
-			text = re.sub('[A-Z][0-9,]+','',text)
+			text = re.sub('^[A-Z]* ','',text)
 
 			bc = 0
 			temp = ''
@@ -116,8 +112,8 @@ def getDocText(text,style):
 
 	text = text.replace(u'\u2019',"'")
 	text = text.encode('ascii','ignore')
-	if re.match('[A-Z][0-9]+',text):
-		text = re.sub('[A-Z][0-9,]+','',text).split('//')[0]
+	if re.match('^[A-Z] ',text) and not '(tutor)' in text and not 'student)' in text:
+		text = re.sub('^[A-Z] ','',text).split('//')[0]
 
 		bc = 0
 		temp = ''
@@ -141,8 +137,8 @@ def getOnscreenText(text,style):
 
 	text = text.replace(u'\u2019',"'")
 	text = text.encode('ascii','ignore')
-	if not re.match('[A-Z][0-9]+',text):
-		text = re.sub('[A-Z][0-9,]+','',text).split('//')[0]
+	if not re.match('^[A-Z] ',text):
+		text = re.sub('^[A-Z] ','',text).split('//')[0]
 
 		bc = 0
 		temp = ''
@@ -195,7 +191,8 @@ def getlessonitemstats(itemfn):
 		
 		for run in par.runs:
 			if not run.strike:
-				text += run.text
+				text += ' ' + run.text
+		text = re.sub('^ ','',text)
 
 		if style == 'NoResponse' or style == 'SecondaryNoResponse': inNR = True
 		elif style in mainlinestyles: inNR = False
@@ -209,10 +206,10 @@ def getlessonitemstats(itemfn):
 			if re.match('^correct',text.lower()):
 				avgcorrcount += 1
 		if inBranch or inNR or not style in mainlinestyles:
-			if re.match('[A-Z][0-9]+',text):
+			if re.match('^[A-Z][0-9]* ',text):
 				btext = text.replace(u'\u2019',"'")
 				btext = btext.encode('ascii','ignore')
-				btext = re.sub('[A-Z][0-9,]+','',btext)
+				btext = re.sub('^[A-Z][0-9,]* ','',btext)
 
 				bc = 0
 				temp = ''
@@ -265,10 +262,7 @@ def getlessonitemstats(itemfn):
 	TTStime = getLength(doctext,wavfn)
 	MLtime = getLength(MLtext,wavfn.replace('.wav','-main.wav'))
 	NRtime = getLength(NRtext,wavfn.replace('.wav','-NR.wav'))
-	#if len(onscreentext) > 0:
-	#	onscreentime = getLength(NRtext,wavfn.replace('.wav','-OS.wav'))
-	#else:
-	#	onscreentime = 0.
+	
 	return {
 			'word count': wc,
 			'submit time': submittime, 

@@ -22,7 +22,7 @@ if not filename[-4:] == 'docx':
 		print 'OS file must be of type *.docx' 
 		exit(3)
 lesson = re.search('[0-9][0-9][0-9]',filename).group()
-filepath = filename.replace(lesson + '.docx','')
+filepath = '/'.join(filename.split('/')[:-1]) + '/'#replace(lesson + '.docx','')
 
 paths = parseOSfile(filename)
 
