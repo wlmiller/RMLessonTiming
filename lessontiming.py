@@ -26,15 +26,9 @@ filepath = filename.replace(lesson + '.docx','')
 
 paths = parseOSfile(filename)
 
-for path in paths:
-	print path + ':',
-	print ', '.join(sorted(paths[path]))
-
 allitems = []
-for path in paths:
-	allitems += paths[path]
-
-allitems = set([i.encode('ascii') for i in allitems])
+for fn in [f for f in os.listdir(filepath + 'Scripts/') if 'docx' in f]:
+	allitems += [fn.split('.doc')[0].encode('ascii')]
 
 itemstats = {}
 emptylesson = {
@@ -46,9 +40,11 @@ emptylesson = {
 	'dialogue time (main branch)': 0., 	# Main branch dialogue time estimate
 	'dialogue time (NR branch)': 0., 	# NoResponse branch dialogue time estimate
 	}
-stats = ['word count', 'submit time', 'WTD count', 'next count','dialogue time (total)', 'dialogue time (main branch)', 'dialogue time (NR branch)']
 
-def predLength(itemstat):
+def predLessonLength(itemstats):
+	return '45:00'
+
+def predItemLength(itemstat):
 	prediction = 21.565
 	prediction += 0. * itemstat['word count']
 	prediction += 0.269 * itemstat['submit time']
@@ -58,12 +54,15 @@ def predLength(itemstat):
 	prediction += 0.602 * itemstat['dialogue time (main branch)']
 	prediction += 0. * itemstat['dialogue time (NR branch)']
 
-	return prediction
+	minutes = int(prediction/60)
+	seconds = int(round(prediction-minutes*60))
+	return str(minutes) + ':' + str(seconds)
 
 print ''
-for item in sorted(allitems):
+for i in sorted(allitems):
+	item = '-'.join(i.split('-')[1:])
 	itemstats[item] = emptylesson
-	itemfile = filepath + 'Scripts/' + lesson + '-' + item + '.docx'
+	itemfile = filepath + 'Scripts/' + i + '.docx'
 	
 	if os.path.exists(itemfile.replace('docx','doc')) and not os.path.exists(itemfile):
 		print 'Warning: script for item ' + item + ' is in *.doc format, not *.docx; skipping.'
@@ -74,17 +73,12 @@ for item in sorted(allitems):
 		print 'Warning: Scripts/' + lesson + '-' + item + '.docx not found!'
 	else:
 		itemstats[item] = getlessonitemstats(itemfile)
-	print item + ':'
-	for stat in stats:
-		print '\t{0:30s} {1:4d}'.format(stat,int(itemstats[item][stat]))
-	print '\t' + '='*35
-	print '\t{0:30s} {1:4d}'.format('PREDICTED TIME',int(predLength(itemstats[item])))
+		print i.ljust(15) + predItemLength(itemstats[item]).rjust(10)
 
-print ''
+print '='*25
 
 for path in ['weak + behind','weak + ontime']:
-	print path + ':',
-	print '{0:.2f}'.format(sum([predLength(itemstats[i]) for i in paths[path]])/60.),
-	print 'min.'
+	pathstats = [itemstats[i] for i in paths[path]]
+	print path.ljust(15) + predLessonLength(pathstats).rjust(10)
 
 sys.stdin.readline()

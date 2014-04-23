@@ -20,7 +20,7 @@ def getLength(text,wavfn):
     	rate = f.getframerate()
     	duration = frames / float(rate)
    
-	#os.remove(wavfn)
+	os.remove(wavfn)
 	return duration
 
 def getStats(text,style):
