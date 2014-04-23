@@ -31,15 +31,6 @@ for fn in [f for f in os.listdir(filepath + 'Scripts/') if 'doc' in f]:
 	allitems += [fn.split('.doc')[0].encode('ascii')]
 
 itemstats = {}
-emptylesson = {
-	'word count': 0,	# Word count
-	'submit time': 0, 	# Total submit time
-	'WTD count': 0, 	# "Write this down" count
-	'next count': 0,	# "Next" count
-	'dialogue time (total)': 0., 		# Total dialogue time estimate
-	'dialogue time (main branch)': 0., 	# Main branch dialogue time estimate
-	'dialogue time (NR branch)': 0., 	# NoResponse branch dialogue time estimate
-	}
 
 itemcoefficients = {
 	'submit time': 0.302,
@@ -79,8 +70,6 @@ def predLessonLength(itemstats):
 				lessonstats[feat] += i[feat]
 	
 	lessonstats['corrects per branch'] = lessonstats['total corrects']/lessonstats['branch count']
-
-	print lessonstats
 
 	prediction = lessoncoefficients['y-intercept']
 	for feat in lessoncoefficients:
