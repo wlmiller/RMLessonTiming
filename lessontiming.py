@@ -54,9 +54,42 @@ itemcoefficients = {
 	'y-intercept': 20.293
 }
 
+lessoncoefficients = {
+	'WTD count': 32.970,
+	'next count': 3.004,
+	'dialogue time (total)': 1.213,
+	'onscreen text word count': -0.092,
+	'medium count': 6.307,
+	'nonstandard submit time': 0.290,
+	'long submit time': -0.234,
+	'corrects per branch': -72.396,
+	'branch count': 0.,
+	'total corrects': 0.,
+	'y-intercept': 640.44
+}
 
 def predLessonLength(itemstats):
-	return '45:00'
+	lessonstats = {}
+	for i in itemstats:
+		i['total corrects'] = i['corrects per branch']*i['branch count']
+	for feat in lessoncoefficients:
+		lessonstats[feat] = 0
+		for i in itemstats:
+			if feat in i:
+				lessonstats[feat] += i[feat]
+	
+	lessonstats['corrects per branch'] = lessonstats['total corrects']/lessonstats['branch count']
+
+	print lessonstats
+
+	prediction = lessoncoefficients['y-intercept']
+	for feat in lessoncoefficients:
+		if feat != 'y-intercept':
+			prediction += lessoncoefficients[feat]*lessonstats[feat]
+
+	minutes = int(prediction/60)
+	seconds = int(round(prediction-minutes*60))
+	return str(minutes) + ':' + str(seconds).zfill(2)
 
 def predItemLength(itemstat):
 	prediction = itemcoefficients['y-intercept'] 
@@ -68,27 +101,20 @@ def predItemLength(itemstat):
 	seconds = int(round(prediction-minutes*60))
 	return str(minutes) + ':' + str(seconds).zfill(2)
 
-print ''
 for i in sorted(allitems):
 	item = '-'.join(i.split('-')[1:])
-	#itemstats[item] = emptylesson
 	itemfile = filepath + 'Scripts/' + i + '.docx'
 	
 	if os.path.exists(itemfile.replace('docx','doc')) and not os.path.exists(itemfile):
 		print 'Warning: script for item ' + item + ' is in *.doc format, not *.docx; skipping.'
 		itemstats[i] = {}
 	elif not os.path.exists(itemfile):
-		print '"' + lesson + '"'
-		print '"' + item + '"'
-		print itemfile
 		print 'Warning: Scripts/' + lesson + '-' + item + '.docx not found!'
 	else:
 		itemstats[item] = getlessonitemstats(itemfile)
 		print i.ljust(15) + predItemLength(itemstats[item]).rjust(10)
 
 print '='*25
-
-print itemstats.keys()
 
 for path in ['weak + behind','weak + ontime']:
 	pathstats = [itemstats[i] for i in paths[path]]
