@@ -41,4 +41,5 @@ def parseOSfile(osfn):
 					print e
 					pass
 
+	for path in paths: paths[path] = sorted(list(set(paths[path])))		# Remove duplicates and sort
 	return paths
