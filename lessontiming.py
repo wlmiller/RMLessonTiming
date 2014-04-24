@@ -69,7 +69,7 @@ def predLength(stats,coefs):
 	'''Calculate a prediction from a set of coefficients for the given set of variables.'''
 	prediction = coefs['y-intercept']
 	prediction += sum([stats[f]*coefs[f] for f in coefs if f != 'y-intercept'])
-	return timeFormat(prediction)
+	return prediction
 
 def lessonStats(itemstats):
 	'''Aggregate lesson item statistics for a given path through the lesson.'''
@@ -97,12 +97,12 @@ for i in sorted(allitems):
 		print 'Warning: Scripts/' + lesson + '-' + item + '.docx not found!'
 	else:
 		itemstats[item] = getlessonitemstats(itemfile)
-		print i.ljust(15) + predLength(itemstats[item],itemcoefficients).rjust(10)
+		print i.ljust(15) + timeFormat(predLength(itemstats[item],itemcoefficients)).rjust(10)
 
 print '='*25
 
 for path in ['weak + behind','weak + ontime']:
 	pathstats = [itemstats[i] for i in paths[path]]
-	print path.ljust(15) + predLength(lessonStats(pathstats),lessoncoefficients).rjust(10)
+	print path.ljust(15) + timeFormat(predLength(lessonStats(pathstats),lessoncoefficients)).rjust(10)
 
 sys.stdin.readline()
