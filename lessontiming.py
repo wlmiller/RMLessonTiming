@@ -101,8 +101,16 @@ for i in sorted(allitems):
 
 print '='*25
 
+branchpath = []
+for branch in paths['branches']:
+	branchpath += max(branch,key = lambda x: sum([predLength(itemstats[i],itemcoefficients) for i in x]))
+	# This isn't strictly correct -- proper way would be to try all possible lesson paths for all
+	# possible branch paths, since the lesson timing model is not the sum over items of the item
+	# timing model.  In practice, though, this should be more than good enough, and it's much simpler
+	# if there are multiple branch points in paths['branches'].
+
 for path in ['weak + behind','weak + ontime']:
-	pathstats = [itemstats[i] for i in paths[path]]
+	pathstats = [itemstats[i] for i in (paths[path] + branchpath)]
 	print path.ljust(15) + timeFormat(predLength(lessonStats(pathstats),lessoncoefficients)).rjust(10)
 
 sys.stdin.readline()
