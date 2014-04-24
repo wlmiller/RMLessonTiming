@@ -117,7 +117,7 @@ with open(csvfilename,'w') as csvfile:
 			print i.ljust(15) + timeFormat(predLength(itemstats[item],itemcoefficients)).rjust(10)
 			csvfile.write(i + ',' + timeFormat(predLength(itemstats[item],itemcoefficients)) + '\n')
 
-	csvfile.write('\npath,time\n')
+	csvfile.write('\ndescription,time,path\n')
 
 	branchpath = []
 	for branch in paths['branches']:
@@ -130,6 +130,7 @@ with open(csvfilename,'w') as csvfile:
 	for path in ['weak + behind','weak + ontime']:
 		pathstats = [itemstats[i] for i in (paths[path] + branchpath)]
 		print path.ljust(15) + timeFormat(predLength(lessonStats(pathstats),lessoncoefficients)).rjust(10)
-		csvfile.write(path + ',' + timeFormat(predLength(lessonStats(pathstats),lessoncoefficients)) + '\n')
+		csvfile.write(path + ',' + timeFormat(predLength(lessonStats(pathstats),lessoncoefficients)) + ',')
+		csvfile.write('->'.join(sorted(paths[path]+branchpath)) + '\n')
 
 Popen(csvfilename, shell=True)
