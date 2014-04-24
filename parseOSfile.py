@@ -60,5 +60,4 @@ def parseOSfile(osfn):
 
 	for path in truepaths: 
 		paths[path] = sorted(list(set(paths[path])))		# Remove duplicates and sort
-	print paths['branches'][0]
 	return paths
