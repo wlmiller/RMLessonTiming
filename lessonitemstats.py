@@ -31,9 +31,9 @@ def getLength(text,wavfn):
 	stream.Close()
 	
 	with contextlib.closing(wave.open(wavfn,'r')) as f:
-   		frames = f.getnframes()
-    	rate = f.getframerate()
-    	duration = frames / float(rate)
+		frames = f.getnframes()
+		rate = f.getframerate()
+		duration = frames / float(rate)
    
 	os.remove(wavfn)
 	return duration
