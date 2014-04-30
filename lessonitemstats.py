@@ -61,8 +61,8 @@ def getStats(text,style):
             submittime += stime
             nonstandardsubmittime += stime
             if stime >= 180: longsubmittime += stime
-            elif re.search('[0-9]+ second',text.lower()):
-                time = re.search('[0-9]+ second',text.lower()).group(0)
+        elif re.search('[0-9]+ second',text.lower()):
+            time = re.search('[0-9]+ second',text.lower()).group(0)
             stime = int(time.split(' ')[0])
             submittime += stime
             nonstandardsubmittime += stime
