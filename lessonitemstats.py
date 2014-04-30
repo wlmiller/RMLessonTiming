@@ -290,3 +290,5 @@ if __name__ == '__main__':
         print feat + ':',
         if isinstance(stats[feat],int): print stats[feat]
         else: print '{0:.2f}'.format(stats[feat])
+
+    sys.stdin.readline()
