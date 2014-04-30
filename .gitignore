@@ -1,8 +1,6 @@
 /*.swp
 /*.pyc
-/build/*
-/dist/*
-/lessontiming/*
+/*/*
 *.txt
 *.wav
 setup.py
