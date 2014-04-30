@@ -41,32 +41,32 @@ allitems = sorted(list(set(allitems)))
 itemstats = {}
 
 itemcoefficients = {
-    'submit time': 0.302,
-    'WTD count': 29.055,
-    'next count': 5.602,
-    'dialogue time (total)': 0.887,
-    'dialogue time (main branch)': 0.443,
-    'dialogue time (NR branch)': -0.344,
-    'onscreen text word count': 0.114,
-    'long submit time': -0.049,
-    'corrects per branch': -3.133,
-    'y-intercept': 20.293,
-    'branch count': 1 
-}
+        'submit time': 0.302,
+        'WTD count': 29.055,
+        'next count': 5.602,
+        'dialogue time (total)': 0.887,
+        'dialogue time (main branch)': 0.443,
+        'dialogue time (NR branch)': -0.344,
+        'onscreen text word count': 0.114,
+        'long submit time': -0.049,
+        'corrects per branch': -3.133,
+        'y-intercept': 20.293,
+        'branch count': 1 
+        }
 
 lessoncoefficients = {
-    'WTD count': 32.970,
-    'next count': 3.004,
-    'dialogue time (total)': 1.213,
-    'onscreen text word count': -0.092,
-    'medium count': 6.307,
-    'nonstandard submit time': 0.290,
-    'long submit time': -0.234,
-    'corrects per branch': -72.396,
-    'branch count': 0.,
-    'total corrects': 0.,
-    'y-intercept': 640.44
-}
+        'WTD count': 32.970,
+        'next count': 3.004,
+        'dialogue time (total)': 1.213,
+        'onscreen text word count': -0.092,
+        'medium count': 6.307,
+        'nonstandard submit time': 0.290,
+        'long submit time': -0.234,
+        'corrects per branch': -72.396,
+        'branch count': 0.,
+        'total corrects': 0.,
+        'y-intercept': 640.44
+        }
 
 def timeFormat(time):
     '''Format a time in seconds as mm:ss.'''
@@ -91,7 +91,7 @@ def lessonStats(itemstats):
         for i in itemstats:
             if feat in i:
                 lessonstats[feat] += i[feat]
-    
+
     lessonstats['corrects per branch'] = lessonstats['total corrects']/lessonstats['branch count']
 
     return lessonstats
@@ -103,7 +103,7 @@ with open(csvfilename,'w') as csvfile:
     for i in sorted(allitems):
         item = '-'.join(i.split('-')[1:])
         itemfile = filepath + 'Scripts/' + i + '.docx'
-        
+
         if os.path.exists(itemfile.replace('docx','doc')) and not os.path.exists(itemfile):
             print >> sys.stderr, 'WARNING: script for item ' + item + ' is in *.doc format, not *.docx; skipping.'
             itemstats[item] = {}
