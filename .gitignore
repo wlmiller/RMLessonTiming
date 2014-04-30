@@ -3,6 +3,6 @@
 /*/*
 *.txt
 *.wav
-setup.py
+setup*.py
 *.csv
 *.zip
