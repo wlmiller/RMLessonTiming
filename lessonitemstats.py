@@ -6,9 +6,9 @@ import comtypes.gen
 import wave, contextlib
 from Tkinter import Tk
 from tkFileDialog import askopenfilename
+import tempfile
 
 mainlinestyles = ['Line','Normal','DefaultStyle','Onscreen']
-removewavfile = True
 
 def removeBracketed(text):
     '''Remove text enclosed in square brackets.  Regexes can't really handle
@@ -26,6 +26,9 @@ def removeBracketed(text):
 def getLength(text,wavfn):
     '''Get the length, in seconds, of a wav file produced by applying a
     text-to-speech engine to the given text.'''
+    with tempfile.NamedTemporaryFile() as f:
+        wavfn = f.name
+
     engine = CreateObject("SAPI.SpVoice")
     stream = CreateObject("SAPI.SpFileStream")
     stream.Open(wavfn, comtypes.gen.SpeechLib.SSFMCreateForWrite)
@@ -38,8 +41,7 @@ def getLength(text,wavfn):
         rate = f.getframerate()
         duration = frames / float(rate)
 
-    if removewavfile:
-        os.remove(wavfn)
+    os.remove(wavfn)
     return duration
 
 def getStats(text,style):
@@ -283,7 +285,6 @@ if __name__ == '__main__':
             print >> sys.stderr, 'OS file must be of type *.docx' 
             exit(3)
 
-    removewavfile = False
     stats = getlessonitemstats(filename)
 
     for feat in stats:
