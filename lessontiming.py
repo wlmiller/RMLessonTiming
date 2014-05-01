@@ -28,7 +28,7 @@ filepath = '/'.join(filename.split('/')[:-1]) + '/'
 paths = parseOSfile(filename)
 
 allitems = []
-for fn in [f for f in os.listdir(filepath + 'Scripts/') if 'doc' in f]:
+for fn in [f for f in os.listdir(filepath + 'Scripts/') if 'doc' in f and not '~' in f]:
     allitems += [fn.split('.doc')[0].encode('ascii')]
 
 for path in ['weak + behind','weak + ontime']:
